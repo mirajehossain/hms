@@ -1,0 +1,22 @@
+
+{
+  "apps": [
+    {
+      "script": "app.js",
+      "PORT": 9000,
+      "instances": 1,
+      "exec_mode": "cluster",
+      "combine_logs": false,
+      "out_file": "./logs/hmm-out.log",
+      "error_file": "./logs/hmm-error.log",
+      "env_production": {
+        "name": "hospital-management-system.prod",
+        "NODE_ENV": "production"
+      },
+      "env_development": {
+        "name": "hospital-management-system.dev",
+        "NODE_ENV": "development"
+      }
+    }
+  ]
+}
