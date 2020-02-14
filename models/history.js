@@ -9,7 +9,7 @@ const historySchema = new Schema({
     type: Date, default: new Date(),
   },
   historyType: {
-    type: String, trim: true, required: true, index: true,
+    type: String, trim: true, required: true, index: true, // first_consultation, followup, ...
   },
   symptoms: {
     type: String, required: true,

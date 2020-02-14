@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs');
 
 const { UserModel } = require('../models/users');
+const { HistoryModel } = require('../models/history');
 const { userType } = require('../config/constants');
 const response = require('../helpers/response');
 
@@ -109,6 +110,30 @@ module.exports = {
       const user = await UserModel
         .findOne({ _id: patientId, userType: userType.patient }, { password: 0 }).lean();
       return res.status(200).send(response.success('patient profile', user));
+    } catch (e) {
+      console.log(e);
+      return res.status(500).send(response.error('An error occur', `${e.message}`));
+    }
+  },
+
+  async getPrescription(req, res) {
+    try {
+      const { patientId } = req.params;
+      const user = await HistoryModel
+        .find({ patientId }).lean();
+      return res.status(200).send(response.success('patient prescription', user));
+    } catch (e) {
+      console.log(e);
+      return res.status(500).send(response.error('An error occur', `${e.message}`));
+    }
+  },
+
+  async getConsultationHistory(req, res) {
+    try {
+      const { doctorId } = req.params;
+      const user = await HistoryModel
+        .find({ doctorId }).lean();
+      return res.status(200).send(response.success('doctor consultations history', user));
     } catch (e) {
       console.log(e);
       return res.status(500).send(response.error('An error occur', `${e.message}`));

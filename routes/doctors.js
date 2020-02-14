@@ -9,6 +9,11 @@ const router = express.Router();
 // get all doctors
 router.get('/', authentication.isAdmin, UserController.getDoctors);
 
+// get consultation lists
+router.get('/consult/:doctorId', authentication.isAdmin, UserController.getConsultationHistory);
+
+router.get('/consult/:doctorId/:patientId', authentication.isAdmin, UserController.takeConsultations);
+
 // create doctor
 router.post('/', authentication.isAdmin,
   joiValidator(userSchema.createUser, JOI.property.body),
