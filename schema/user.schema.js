@@ -15,11 +15,15 @@ module.exports = {
     designation: Joi.string(),
   }),
 
-  updateAuthor: Joi.object({
+  updatePatient: Joi.object({
     name: Joi.string(),
     mobile: Joi.number(),
     email: Joi.string().email(),
     image: Joi.string(),
+    bloodGroup: Joi.string(),
+    isDonor: Joi.boolean(),
+    designation: Joi.string(),
+
   }),
 
 };

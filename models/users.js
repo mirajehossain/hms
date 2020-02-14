@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const userSchema = new Schema({
-  userType: { type: String, required: true },
+  userType: { type: String, required: true }, // admin, doctor, patient
   name: {
     type: String, trim: true, required: true, index: true,
   },
@@ -19,7 +19,7 @@ const userSchema = new Schema({
   image: { type: String, required: false },
   address: { type: String, required: false },
   bloodGroup: { type: String, required: false },
-  isDonor: { type: Boolean },
+  isDonor: { type: Boolean, default: false },
   designation: { type: String, required: false },
 }, { versionKey: false, timestamps: true });
 
