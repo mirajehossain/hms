@@ -14,6 +14,8 @@ const { authentication } = require('./middleware/index');
 const indexRoute = require('./routes/index');
 const AuthRoute = require('./routes/auth');
 const UserRoute = require('./routes/users');
+const DoctorRoute = require('./routes/doctors');
+const PatientRoute = require('./routes/patients');
 
 const corsOptions = {
   origin: true,
@@ -35,6 +37,8 @@ app.use('/api', indexRoute);
 app.use('/api/auth/', AuthRoute);
 app.use('/api/v1/*', authentication.validateToken);
 app.use('/api/v1/users', UserRoute);
+app.use('/api/v1/users/doctor', DoctorRoute);
+app.use('/api/v1/users/patient', PatientRoute);
 
 
 /**
