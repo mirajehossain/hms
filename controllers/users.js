@@ -6,6 +6,61 @@ const response = require('../helpers/response');
 
 module.exports = {
 
+
+  async createDoctor(req, res) {
+    try {
+      const payload = req.body;
+      const user = await UserModel.findOne({ email: payload.email }).lean();
+      payload.userType = userType.doctor;
+      payload.password = bcrypt.hashSync(payload.password, Number(process.env.SALT_ROUND));
+
+      if (user) {
+        return res.status(200).send(response.success('Doctor already create with this email', {}, false));
+      }
+
+      const doctor = await UserModel.create(payload);
+      return res.status(200).send(response.success('New doctor created', doctor));
+    } catch (e) {
+      console.log(e);
+      return res.status(500).send(response.error('An error occur', `${e.message}`));
+    }
+  },
+
+  async updateDoctor(req, res) {
+    try {
+      const payload = req.body;
+      const { doctorId } = req.params;
+      const user = await UserModel
+        .findOneAndUpdate({ _id: doctorId }, payload, { new: true }).lean();
+      return res.status(200).send(response.success('doctor profile updated', user));
+    } catch (e) {
+      console.log(e);
+      return res.status(500).send(response.error('An error occur', `${e.message}`));
+    }
+  },
+
+  async getDoctors(req, res) {
+    try {
+      const user = await UserModel.find({ userType: userType.doctor }, { password: 0 });
+      return res.status(200).send(response.success('doctor lists', user));
+    } catch (e) {
+      console.log(e);
+      return res.status(500).send(response.error('An error occur', `${e.message}`));
+    }
+  },
+
+  async getDoctor(req, res) {
+    try {
+      const { doctorId } = req.params;
+      const user = await UserModel
+        .findOne({ _id: doctorId, userType: userType.doctor }, { password: 0 }).lean();
+      return res.status(200).send(response.success('doctor profile', user));
+    } catch (e) {
+      console.log(e);
+      return res.status(500).send(response.error('An error occur', `${e.message}`));
+    }
+  },
+
   async createPatient(req, res) {
     try {
       const payload = req.body;
