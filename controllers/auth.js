@@ -9,13 +9,13 @@ module.exports = {
   async login(req, res) {
     try {
       const payload = req.body;
-      const { password, ...user } = await UserModel
+      const user = await UserModel
         .findOne({ email: payload.email })
         .lean()
         .exec();
 
       if (user) {
-        const matched = bcrypt.compareSync(payload.password, password);
+        const matched = bcrypt.compareSync(payload.password, user.password);
 
         if (matched) {
           const tokenObject = {
@@ -29,7 +29,7 @@ module.exports = {
             .send(response.success('Successfully logged-in', { accessToken, ...user }));
         }
         return res.status(200)
-          .send(response.error(false, 'Incorrect email or password', 'Incorrect email or password '));
+          .send(response.error('Incorrect email or password', 'Incorrect email or password '));
       }
       return res.status(200)
         .send(response.success('User not exist', {}, false));

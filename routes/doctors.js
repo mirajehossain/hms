@@ -3,6 +3,7 @@ const { authentication, joiValidator } = require('../middleware/index');
 const { JOI } = require('../config/constants');
 const UserController = require('../controllers/users');
 const userSchema = require('../schema/user.schema');
+const doctorSchema = require('../schema/doctor.schema');
 
 const router = express.Router();
 
@@ -10,9 +11,17 @@ const router = express.Router();
 router.get('/', authentication.isAdmin, UserController.getDoctors);
 
 // get consultation lists
-router.get('/consult/:doctorId', authentication.isAdmin, UserController.getConsultationHistory);
+router.get('/consult/:doctorId', authentication.isDoctor, UserController.getConsultationHistory);
 
-router.get('/consult/:doctorId/:patientId', authentication.isAdmin, UserController.takeConsultations);
+router.post('/consult',
+  authentication.isDoctor,
+  joiValidator(doctorSchema.consultPatient, JOI.property.body),
+  UserController.consultPatient);
+
+router.patch('/consult/:consultId',
+  authentication.isDoctor,
+  joiValidator(doctorSchema.consultPatient, JOI.property.body),
+  UserController.updateConsultation);
 
 // create doctor
 router.post('/', authentication.isAdmin,
