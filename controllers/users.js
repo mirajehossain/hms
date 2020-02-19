@@ -129,6 +129,50 @@ module.exports = {
     }
   },
 
+  async getPatientReportByDoctor(req, res) {
+    try {
+      const { doctorId, patientId } = req.params;
+      const user = await HistoryModel.find({ doctorId, patientId }).lean().exec();
+      return res.status(200).send(response.success('doctor consultations history', user));
+    } catch (e) {
+      console.log(e);
+      return res.status(500).send(response.error('An error occur', `${e.message}`));
+    }
+  },
+
+  async getDoctorWisePatients(req, res) {
+    try {
+      const { doctorId } = req.params;
+      const user = await HistoryModel
+        .aggregate([
+          { $match: { doctorId: ObjectId(doctorId) } },
+          {
+            $lookup: {
+              from: 'users',
+              localField: 'patientId',
+              foreignField: '_id',
+              as: 'patient',
+            },
+          },
+          { $unwind: '$patient' },
+          {
+            $project: {
+              name: '$patient.name',
+              email: '$patient.email',
+              mobile: '$patient.mobile',
+              image: '$patient.image',
+              address: '$patient.address',
+              bloodGroup: '$patient.bloodGroup',
+            },
+          },
+        ]);
+      return res.status(200).send(response.success('doctor consultations history', user));
+    } catch (e) {
+      console.log(e);
+      return res.status(500).send(response.error('An error occur', `${e.message}`));
+    }
+  },
+
   async getConsultationHistory(req, res) {
     try {
       const { doctorId } = req.params;
@@ -143,12 +187,12 @@ module.exports = {
               as: 'patient',
             },
           },
+          { $unwind: '$patient' },
           {
             $project: {
               'patient.password': 0, 'patient.createdAt': 0, 'patient.updatedAt': 0, createdAt: 0,
             },
           },
-          { $unwind: '$patient' },
         ]);
       return res.status(200).send(response.success('doctor consultations history', user));
     } catch (e) {
