@@ -140,6 +140,17 @@ module.exports = {
     }
   },
 
+  async getPatientReportById(req, res) {
+    try {
+      const { patientId } = req.params;
+      const user = await HistoryModel.find({ patientId }).lean().exec();
+      return res.status(200).send(response.success('doctor consultations history', user));
+    } catch (e) {
+      console.log(e);
+      return res.status(500).send(response.error('An error occur', `${e.message}`));
+    }
+  },
+
   async getDoctorReport(req, res) {
     try {
       const { doctorId } = req.params;
@@ -168,7 +179,7 @@ module.exports = {
             'patient.password': 0, 'patient.createdAt': 0, 'patient.updatedAt': 0, createdAt: 0,
           },
         },
-      ]).sort({ date: -1 });
+      ]).sort({ date: -1 }).limit(7);
 
       return res.status(200).send(response.success('doctor consultations history', {
         totalConsult,
