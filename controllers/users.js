@@ -240,6 +240,7 @@ module.exports = {
             },
           },
           { $unwind: '$patient' },
+          { $sort: { createdAt: 1 } },
           {
             $project: {
               _id: '$patient._id',
