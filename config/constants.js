@@ -13,6 +13,12 @@ module.exports = {
     doctor: 'DOCTOR',
   },
 
+  gender: {
+    male: 'MALE',
+    female: 'FEMALE',
+    other: 'OTHER',
+  },
+
   historyType: {
     preliminary: 'PRELIMINARY',
     observation: 'OBSERVATION',

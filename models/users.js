@@ -16,6 +16,7 @@ const userSchema = new Schema({
   mobile: {
     type: String, trim: true,
   },
+  gender: { type: String, required: true },
   image: { type: String, required: false },
   address: { type: String, required: false },
   bloodGroup: { type: String, required: false },

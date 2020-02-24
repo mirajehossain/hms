@@ -140,12 +140,61 @@ module.exports = {
     }
   },
 
+  async getDoctorReport(req, res) {
+    try {
+      const { doctorId } = req.params;
+      const totalConsult = await HistoryModel.find({ doctorId }).countDocuments();
+      const totalConsultPatient = await HistoryModel.aggregate([
+        { $match: { doctorId: ObjectId(doctorId) } },
+        { $group: { _id: '$patientId', count: { $sum: 1 } } },
+      ]);
+
+      const endDate = new Date();
+      const startDate = new Date();
+      startDate.setDate(startDate.getDate() - 5);
+      const recentConsult = await HistoryModel.aggregate([
+        { $match: { doctorId: ObjectId(doctorId), date: { $gte: startDate, $lte: endDate } } },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'patientId',
+            foreignField: '_id',
+            as: 'patient',
+          },
+        },
+        { $unwind: '$patient' },
+        {
+          $project: {
+            'patient.password': 0, 'patient.createdAt': 0, 'patient.updatedAt': 0, createdAt: 0,
+          },
+        },
+      ]).sort({ date: -1 });
+
+      return res.status(200).send(response.success('doctor consultations history', {
+        totalConsult,
+        totalConsultPatient: totalConsultPatient.length,
+        recentConsult,
+      }));
+    } catch (e) {
+      console.log(e);
+      return res.status(500).send(response.error('An error occur', `${e.message}`));
+    }
+  },
+
   async getDoctorWisePatients(req, res) {
     try {
       const { doctorId } = req.params;
       const user = await HistoryModel
         .aggregate([
           { $match: { doctorId: ObjectId(doctorId) } },
+          {
+            $group: {
+              _id: '$patientId',
+              doctorId: { $last: '$doctorId' },
+              patientId: { $last: '$patientId' },
+            },
+          },
+
           {
             $lookup: {
               from: 'users',
@@ -157,6 +206,7 @@ module.exports = {
           { $unwind: '$patient' },
           {
             $project: {
+              _id: '$patient._id',
               name: '$patient.name',
               email: '$patient.email',
               mobile: '$patient.mobile',

@@ -14,6 +14,7 @@ router.get('/', authentication.isAdmin, UserController.getDoctors);
 router.get('/consult/:doctorId', authentication.isDoctor, UserController.getConsultationHistory);
 router.get('/get-patients/:doctorId', authentication.isDoctor, UserController.getDoctorWisePatients);
 router.get('/get-patient-report/:doctorId/:patientId', authentication.isDoctorOrPatient, UserController.getPatientReportByDoctor);
+router.get('/get-doctor-report/:doctorId', authentication.isDoctor, UserController.getDoctorReport);
 
 router.post('/consult',
   authentication.isDoctor,
