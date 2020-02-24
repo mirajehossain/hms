@@ -1,5 +1,6 @@
 const bcrypt = require('bcryptjs');
 
+const path = require('path');
 const { ObjectId } = require('mongoose').Types;
 const { UserModel } = require('../models/users');
 const { HistoryModel } = require('../models/history');
@@ -57,6 +58,30 @@ module.exports = {
       const user = await UserModel
         .findOne({ _id: doctorId, userType: userType.doctor }, { password: 0 }).lean();
       return res.status(200).send(response.success('doctor profile', user));
+    } catch (e) {
+      console.log(e);
+      return res.status(500).send(response.error('An error occur', `${e.message}`));
+    }
+  },
+
+  async getUser(req, res) {
+    try {
+      const { userId } = req.params;
+      const user = await UserModel
+        .findOne({ _id: userId }, { password: 0 }).lean();
+      return res.status(200).send(response.success('User profile', user));
+    } catch (e) {
+      console.log(e);
+      return res.status(500).send(response.error('An error occur', `${e.message}`));
+    }
+  },
+
+  async updateProfile(req, res) {
+    try {
+      const { userId } = req.params;
+      const user = await UserModel
+        .findOneAndUpdate({ _id: userId }, req.body, { new: true });
+      return res.status(200).send(response.success('User profile updated', user));
     } catch (e) {
       console.log(e);
       return res.status(500).send(response.error('An error occur', `${e.message}`));
@@ -281,6 +306,28 @@ module.exports = {
       const consult = await HistoryModel.findOneAndUpdate({ _id: consultId }, body, { new: true });
 
       return res.status(200).send(response.success('consultation updated successfully', consult));
+    } catch (e) {
+      console.log(e);
+      return res.status(500).send(response.error('An error occur', `${e.message}`));
+    }
+  },
+
+  async uploadImage(req, res) {
+    try {
+      const { userId } = req.params;
+      const user = await UserModel.findOne({ _id: userId }).lean();
+
+      if (!user) {
+        return res.status(200).send(response.success('User not found', {}, false));
+      }
+
+      const fileName = req.file.originalname;
+      const sourcePath = `http://${path.join(`${req.headers.host}/${fileName}`)}`;
+
+      const updatedUser = await UserModel
+        .findOneAndUpdate({ _id: userId }, { image: sourcePath }, { new: true });
+
+      return res.status(200).send(response.success('Profile image upload successfully', updatedUser));
     } catch (e) {
       console.log(e);
       return res.status(500).send(response.error('An error occur', `${e.message}`));

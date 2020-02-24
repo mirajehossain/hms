@@ -2,6 +2,8 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 
+const path = require('path');
+
 const app = express();
 const server = require('http').createServer(app);
 const db = require('./config/database');
@@ -23,6 +25,8 @@ const corsOptions = {
   credintials: true,
   exposedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization'],
 };
+
+app.use('/', express.static(path.join(`${__dirname}/uploads`)));
 
 
 app.use(cors(corsOptions));
