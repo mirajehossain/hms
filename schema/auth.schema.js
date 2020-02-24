@@ -13,6 +13,7 @@ module.exports = {
     mobile: Joi.number(),
     email: Joi.string().email().required(),
     password: Joi.string().required(),
+    gender: Joi.string(),
   }),
 
 };
