@@ -12,7 +12,7 @@ module.exports = {
     address: Joi.string(),
     bloodGroup: Joi.string(),
     isDonor: Joi.boolean(),
-    gender: Joi.boolean(),
+    gender: Joi.string(),
     designation: Joi.string(),
   }),
 
