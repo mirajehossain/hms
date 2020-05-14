@@ -9,7 +9,7 @@ const server = require('http').createServer(app);
 const db = require('./config/database');
 
 db.connect();
-const port = process.env.PORT || 9000;
+const port = process.env.PORT || 8000;
 
 const { authentication } = require('./middleware/index');
 
